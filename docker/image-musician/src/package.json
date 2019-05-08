@@ -1,0 +1,15 @@
+{
+  "name": "musician",
+  "version": "1.0.0",
+  "description": "",
+  "main": "musician.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Lionel Burgbacher",
+  "license": "ISC",
+  "dependencies": {
+    "uuid": "^3.3.2",
+    "uuidv4": "^4.0.0"
+  }
+}
