@@ -1,8 +1,4 @@
-/*
- * We have defined the multicast address and port in a file, that can be imported both by
- * thermometer.js and station.js. The address and the port are part of our simple 
- * application-level protocol
- */
+
 const protocol = require('./auditor-protocol');
 
 /*
@@ -10,7 +6,9 @@ const protocol = require('./auditor-protocol');
  */
 const dgram = require('dgram');
 
-
+/*
+ * Use to know is a musician is still playing
+ */
 var moment = require('moment');
 moment().format();
 
@@ -18,7 +16,7 @@ var net = require('net');
 
 /* 
  * Let's create a datagram socket. We will use it to listen for datagrams published in the
- * multicast group by thermometers and containing measures
+ * multicast group by musicians
  */
 const s = dgram.createSocket('udp4');
 
@@ -36,54 +34,59 @@ instruments.set("trulu", "flute");
 instruments.set("gzi-gzi", "violin");
 instruments.set("boum-boum", "drum");
 
-var isPlaying = new Map();
+//map with all musicians
+var musicians = new Map();
 
+//Array that will be send with the server TCP
 var dataToSend = new Array();
 
 s.on('message', function(msg, source) {
-	//console.log("Data has arrived: " + msg + ". Source port: " + source.port);
+
 	var musician = JSON.parse(msg);
 
 	//Add a musician if it's not already done
-	if(!isPlaying.has(musician.uuid)){
+	if(!musicians.has(musician.uuid)){
 
 		musician.instrument = instruments.get(musician.sound);
 		musician.activeSince = moment();
 		musician.isActive = true;
-		isPlaying.set(musician.uuid, musician);
+		musicians.set(musician.uuid, musician);
 	}
 	//update isActive and the time he plays
 	else{
-		isPlaying.get(musician.uuid).activeSince = moment();
-		isPlaying.get(musician.uuid).isActive = true;
+		musicians.get(musician.uuid).activeSince = moment();
+		musicians.get(musician.uuid).isActive = true;
 	}
 });
 
+//Used to verify if a musician is still playing
 setInterval(function(){
 
 	dataToSend = new Array();
 
-	for (var [key, value] of isPlaying.entries()) {
+	for (var [key, value] of musicians.entries()) {
 
-		var music = new Object();
-		music.uuid =  value.uuid;
-		music.instrument = value.instrument;
-		music.activeSince = value.activeSince;
+		var musician = new Object();
+		musician.uuid =  value.uuid;
+		musician.instrument = value.instrument;
+		musician.activeSince = value.activeSince;
 
-		var time = moment().diff(music.activeSince);
-		console.log(time);
+		var time = moment().diff(musician.activeSince);
 
-		if(time < 5000 && !music.isActive){
-			dataToSend.push(music);
+		//verifiy if the musician is still playing
+		if(time >= 5000){
+			musicians.get(musician.uuid).isActive = false;
 		}
-		else{
-			isPlaying.get(music.uuid).isActive = false;
+
+		//if the musician is still active, it will be put in the Array to send
+		if(musicians.get(musician.uuid).isActive){
+			dataToSend.push(musician);
 		}
 	}
 
 }, 1000);
 
-
+//Server TCP 
 var server = net.createServer(function (socket) {
 	var payload = JSON.stringify(dataToSend);
 	socket.write(payload + '\r\n');
