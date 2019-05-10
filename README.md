@@ -109,7 +109,7 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 |Question | Who is going to **send UDP datagrams** and **when**? |
 | | Musician will send data each time they play. |
 |Question | Who is going to **listen for UDP datagrams** and what should happen when a datagram is received? |
-| | Auditor will listen and add will be add to an active musicians list |
+| | Auditor will listen and musician will be add to an active musicians list |
 |Question | What **payload** should we put in the UDP datagrams? |
 | | **uuid** - musician id<br />**instrument** - the insturment played by musicians |
 |Question | What **data structures** do we need in the UDP sender and receiver? When will we update these data structures? When will we query these data structures? |
