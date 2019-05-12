@@ -105,7 +105,7 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | --- | --- |
 |Question | How can we represent the system in an **architecture diagram**, which gives information both about the Docker containers, the communication protocols and the commands? |
-| | *Insert your diagram here...* |
+| | ![image](images/schema.png) |
 |Question | Who is going to **send UDP datagrams** and **when**? |
 | | Musician will send data each time they play. |
 |Question | Who is going to **listen for UDP datagrams** and what should happen when a datagram is received? |
@@ -113,7 +113,7 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 |Question | What **payload** should we put in the UDP datagrams? |
 | | **uuid** - musician id<br />**instrument** - the insturment played by musicians |
 |Question | What **data structures** do we need in the UDP sender and receiver? When will we update these data structures? When will we query these data structures? |
-| | *Enter your response here...* |
+| | *JSON, it will be update when the auditor will receive a song and update the time* |
 
 
 ## Task 2: implement a "musician" Node.js application
@@ -143,7 +143,7 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | --- |
 |Question | How do we **define and build our own Docker image**?|
-| | *With a Dockerfile* |
+| | *With a Dockerfile*<br />*docker build -t res/musician .* |
 |Question | How can we use the `ENTRYPOINT` statement in our Dockerfile?  |
 | | *ENTRYPOINT ["node", "/opt/app/musician.js"]* |
 |Question | After building our Docker image, how do we use it to **run containers**?  |
